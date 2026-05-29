@@ -5,7 +5,8 @@
  *  - Auto-starts front camera on mount (no button press needed)
  *  - Manages image array state; passes controlled props to UploadPanel
  *  - Detects gesture falling-edge → advances to next image automatically
- *  - Instruction card shown only 2 full cycles, then permanently hidden
+ *  - Camera permission is handled entirely by WebcamCanvas (no duplicate stream)
+ *  - Compatible with both desktop and mobile Chrome
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -30,9 +31,10 @@ const STEPS = [
 
 export default function App() {
   // ── Camera / loading state ───────────────────────────────────
-  const [permissionGranted, setPermissionGranted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('Đang khởi tạo...');
+  // Start immediately; WebcamCanvas handles the actual permission request
+  const [permissionGranted, setPermissionGranted] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('Đang khởi tạo camera...');
 
   // ── Image state (lifted from UploadPanel) ────────────────────
   const [images, setImages] = useState([]);       // [{url, name}]
@@ -65,32 +67,25 @@ export default function App() {
   useEffect(() => { imagesRef.current = images; }, [images]);
   useEffect(() => { activeIdxRef.current = activeIdx; }, [activeIdx]);
 
-  // ── Auto-start camera on mount ───────────────────────────────
-  useEffect(() => {
-    startCamera();
-  }, []); // eslint-disable-line
-
-  // ── Camera startup ───────────────────────────────────────────
-  const startCamera = async () => {
-    setIsLoading(true);
-    setLoadingText('Đang bật camera trước...');
-    try {
-      // Pre-check permission; actual stream is opened in WebcamCanvas
-      await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'user' } } });
-      setPermissionGranted(true);
-      setLoadingText('Đang tải MediaPipe Hands...');
-      setTimeout(() => setIsLoading(false), 3500);
-    } catch {
-      setIsLoading(false);
-      showToast('Không thể truy cập camera. Vui lòng cấp quyền.', 'error');
-    }
-  };
-
   // ── Toast helper ────────────────────────────────────────────
   const showToast = useCallback((text, type = 'success') => {
     setToast({ show: true, text, type });
     setTimeout(() => setToast(t => ({ ...t, show: false })), 2500);
   }, []);
+
+  // ── Camera ready callback (from WebcamCanvas) ────────────────
+  const handleCameraReady = useCallback(() => {
+    setLoadingText('Đang tải MediaPipe Hands...');
+    // Give MediaPipe extra time to init (mobile needs more)
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    setTimeout(() => setIsLoading(false), isMobile ? 5000 : 3500);
+  }, []);
+
+  const handleCameraError = useCallback((errMsg) => {
+    setIsLoading(false);
+    setPermissionGranted(false);
+    showToast(errMsg || 'Không thể truy cập camera. Vui lòng cấp quyền.', 'error');
+  }, [showToast]);
 
   // ── Image management callbacks ──────────────────────────────
   const handleAddImages = useCallback((files) => {
@@ -179,6 +174,8 @@ export default function App() {
           onHandsDetected={handleHandsDetected}
           onGestureChange={handleGestureChange}
           onFPS={handleFPS}
+          onCameraReady={handleCameraReady}
+          onCameraError={handleCameraError}
         />
       )}
 
