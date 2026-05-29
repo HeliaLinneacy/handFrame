@@ -79,11 +79,8 @@ export class SmoothedRect {
       this.angle = lerpAngle(this.angle, target.angle, f);
     }
 
-    // Smooth opacity: rise fast when gesture detected, fall slowly to hide
-    // brief tracking gaps (1-2 lost frames won't cause visible flicker)
-    const opacityTarget = active ? 1 : 0;
-    const opacityFactor = active ? 0.20 : 0.04;   // fade-in fast, fade-out slow
-    this.opacity = lerp(this.opacity, opacityTarget, opacityFactor);
+    // Instant show/hide — no fade transition
+    this.opacity = active ? 1 : 0;
 
     return {
       x: this.x,
