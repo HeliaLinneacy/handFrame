@@ -1,0 +1,672 @@
+/* =====================================================
+   HandFrame AR — Global Styles
+   Dark mode, glassmorphism, TikTok-inspired design
+   ===================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-glass-hover: rgba(255, 255, 255, 0.09);
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --text-primary: #f0f0ff;
+  --text-secondary: #9090b0;
+  --text-muted: #5a5a7a;
+  --accent-primary: #7c6af7;
+  --accent-secondary: #e040fb;
+  --accent-glow: rgba(124, 106, 247, 0.35);
+  --gradient-hero: linear-gradient(135deg, #7c6af7 0%, #e040fb 50%, #ff6b9d 100%);
+  --success: #4caf94;
+  --danger: #f05068;
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --shadow-glow: 0 0 30px rgba(124, 106, 247, 0.25);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 2px; }
+
+/* ─── App Layout ─────────────────────────────────── */
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Camera Container ───────────────────────────── */
+.camera-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+}
+
+.camera-wrapper video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror */
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.camera-wrapper video.visible {
+  opacity: 1;
+}
+
+.camera-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* ─── UI Overlay ─────────────────────────────────── */
+.ui-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* ─── Header ─────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: all;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--gradient-hero);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: var(--shadow-glow);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 100px;
+  backdrop-filter: blur(12px);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: var(--transition);
+}
+
+.status-badge.active .status-dot {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+  animation: pulse 1.5s infinite;
+}
+
+.status-badge.active {
+  border-color: rgba(76, 175, 148, 0.3);
+  color: var(--text-primary);
+}
+
+.status-badge.gesture .status-dot {
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+.status-badge.gesture {
+  border-color: rgba(124, 106, 247, 0.4);
+  color: var(--accent-primary);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* ─── Instruction card ───────────────────────────── */
+.instruction-card {
+  align-self: center;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  max-width: 340px;
+  text-align: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.instruction-card.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+.instruction-icon {
+  font-size: 38px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.instruction-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.instruction-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ─── Bottom Controls ────────────────────────────── */
+.bottom-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  pointer-events: all;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.upload-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.upload-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--gradient-hero);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-glow);
+  white-space: nowrap;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124, 106, 247, 0.45);
+}
+
+.upload-btn:active {
+  transform: translateY(0);
+}
+
+.upload-btn svg {
+  flex-shrink: 0;
+}
+
+/* Image thumbnail */
+.img-thumb {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 12px var(--accent-glow);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.img-thumb:hover {
+  transform: scale(1.06);
+}
+
+.img-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-thumb-remove {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background: var(--danger);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* ─── Action buttons (right side) ───────────────── */
+.action-btns {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 50%;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-secondary);
+  font-size: 18px;
+}
+
+.icon-btn:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  transform: scale(1.06);
+}
+
+.icon-btn.danger:hover {
+  border-color: var(--danger);
+  box-shadow: 0 0 12px rgba(240, 80, 104, 0.4);
+}
+
+/* Capture button */
+.capture-btn {
+  width: 64px;
+  height: 64px;
+  background: white;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.capture-btn::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  background: white;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.1);
+}
+
+.capture-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px rgba(255,255,255,0.4);
+}
+
+.capture-btn:active {
+  transform: scale(0.95);
+}
+
+/* ─── Permission screen ──────────────────────────── */
+.permission-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px;
+  text-align: center;
+  transition: opacity 0.6s ease;
+}
+
+.permission-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.permission-icon {
+  font-size: 72px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.permission-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.permission-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.7;
+}
+
+.permission-btn {
+  padding: 15px 40px;
+  background: var(--gradient-hero);
+  border: none;
+  border-radius: var(--radius-xl);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-glow);
+}
+
+.permission-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(124, 106, 247, 0.5);
+}
+
+/* ─── Loading overlay ────────────────────────────── */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transition: opacity 0.5s ease;
+}
+
+.loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 52px;
+  height: 52px;
+  border: 3px solid var(--border-glass);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ─── Gesture indicator ──────────────────────────── */
+.gesture-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gesture-ring.active {
+  opacity: 1;
+}
+
+.gesture-ring-inner {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 30px var(--accent-glow), inset 0 0 30px var(--accent-glow);
+  animation: ringPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ─── Hand dots overlay ──────────────────────────── */
+.hands-count-badge {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 8;
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 100px;
+  backdrop-filter: blur(12px);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: opacity 0.3s ease;
+}
+
+/* ─── Flash effect for capture ───────────────────── */
+.flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.flash.active {
+  animation: flashAnim 0.35s ease;
+}
+
+@keyframes flashAnim {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* ─── Toast notification ─────────────────────────── */
+.toast {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(16px);
+  border-radius: var(--radius-md);
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 60;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+  border-color: rgba(76, 175, 148, 0.4);
+  color: var(--success);
+}
+
+/* ─── Hidden file input ──────────────────────────── */
+input[type="file"] {
+  display: none;
+}
+
+/* ─── FPS counter (dev) ──────────────────────────── */
+.fps-badge {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-glass);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  z-index: 12;
+  font-family: monospace;
+  pointer-events: none;
+}
+
+/* ─── Responsive ─────────────────────────────────── */
+@media (max-width: 600px) {
+  .ui-overlay {
+    padding: 14px;
+  }
+
+  .logo-text {
+    font-size: 15px;
+  }
+
+  .instruction-card {
+    max-width: 280px;
+    padding: 16px 20px;
+  }
+
+  .instruction-title {
+    font-size: 14px;
+  }
+
+  .instruction-text {
+    font-size: 12px;
+  }
+
+  .upload-btn {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+
+  .capture-btn {
+    width: 54px;
+    height: 54px;
+  }
+
+  .permission-title {
+    font-size: 22px;
+  }
+}
